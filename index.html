@@ -241,22 +241,21 @@
             align-items: center;
             overflow: hidden;
         }
-
-        .mv-container::before { /* 悬停遮罩 */
-            content: '';
+        
+        #mv-video {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0);
-            backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
-            transition: background-color 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1;
         }
 
-        .mv-container:hover::before {
-            background-color: rgba(0,0,0,0.3);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+        .mv-container:hover #mv-video {
+            opacity: 1;
         }
 
         .mv-link {
@@ -271,7 +270,7 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.3s ease, transform 0.3s ease;
-            z-index: 1;
+            z-index: 2;
         }
 
         .mv-container:hover .mv-link {
@@ -545,7 +544,8 @@
     <!-- 3. MV Section -->
     <section id="mv">
         <h2 class="section-title">MV</h2>
-        <div class="mv-container">
+        <div class="mv-container" id="mv-container">
+            <video id="mv-video" src="https://summering.0m-p.space/assets/videos/summering.mp4" muted loop playsinline></video>
             <a href="https://www.youtube.com/watch?v=UxwHkqkzm0o" target="_blank" class="mv-link">
                 View on YouTube
             </a>
@@ -694,6 +694,17 @@
             const progressBar = document.getElementById('progress-bar');
             const progressContainer = document.getElementById('progress-container');
             const hidePlayerBtn = document.getElementById('hide-player-btn');
+            const mvContainer = document.getElementById('mv-container');
+            const mvVideo = document.getElementById('mv-video');
+
+            mvContainer.addEventListener('mouseenter', () => {
+                mvVideo.play();
+            });
+
+            mvContainer.addEventListener('mouseleave', () => {
+                mvVideo.pause();
+                mvVideo.currentTime = 0;
+            });
 
             let isPlaying = false;
 
