@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summering / じん — Special Page</title>
+    
+    <!-- 字体 & 图标 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Inter:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        /* --- 全局重置与基础样式 --- */
+        :root {
+            --brand-color: #FF6F4A;
+            --dark-blue: #0B1D3A;
+            --text-light-gray: #999;
+            --text-dark: #333;
+            --text-white: #f0f0f0;
+            --bg-black: #000;
+            --bg-white: #fff;
+            --font-main-title: 'Cormorant Garamond', serif;
+            --font-sub-title: 'Noto Serif JP', serif;
+            --font-body-en: 'Inter', sans-serif;
+            --font-body-jp: 'Noto Sans JP', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body-en), var(--font-body-jp);
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            overflow-x: hidden;
+        }
+
+        section {
+            padding: 100px 5%;
+            text-align: center;
+        }
+
+        .section-title {
+            font-family: var(--font-main-title);
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+        }
+
+        /* --- 1. Hero Section --- */
+        .hero {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-white);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            padding: 0;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: opacity 0.4s ease-in-out, filter 0.4s ease-in-out;
+        }
+
+        .hero::before {
+            background-image: url('https://summering.0m-p.space/assets/images/summering_A.png');
+            z-index: -2;
+        }
+
+        .hero::after {
+            background-image: url('https://summering.0m-p.space/assets/images/summering_B.png');
+            opacity: 0;
+            filter: blur(0px); /* 确保B图本身是清晰的 */
+            z-index: -1;
+        }
+
+        .hero:hover::after {
+            opacity: 1;
+        }
+        
+        .hero:hover::before {
+            opacity: 0;
+            filter: blur(5px); /* A图在消失时产生模糊效果 */
+        }
+
+        .hero-content {
+            transition: opacity 0.3s ease-in-out;
+            padding-top: 25vh; /* 再次下沉标题位置 */
+        }
+
+        .hero:hover .hero-content {
+            opacity: 0; /* 悬停时隐藏文字 */
+        }
+
+        .hero-title {
+            font-family: var(--font-main-title);
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: 700;
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-sub-title);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 500;
+            margin-top: -10px;
+        }
+
+        .view-lyrics-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-family: var(--font-main-title);
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border: 1px solid var(--text-white);
+            border-radius: 50px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .view-lyrics-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* --- 2. Lyrics Section --- */
+        #lyrics {
+            background-color: var(--bg-white);
+        }
+
+        .lyrics-controls {
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .lang-btn, .collapse-btn {
+            font-family: var(--font-body-en);
+            font-weight: 500;
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 8px 18px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lang-btn:hover, .collapse-btn:hover {
+            background-color: #f0f0f0;
+            border-color: var(--text-dark);
+        }
+
+        .lang-btn.active {
+            background-color: var(--text-dark);
+            color: var(--text-white);
+            border-color: var(--text-dark);
+        }
+
+        .lyrics-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            line-height: 2.5;
+            font-family: var(--font-sub-title); /* 更换歌词字体 */
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+            overflow: hidden;
+            max-height: 10000px; /* 一个足够大的值 */
+            opacity: 1;
+            margin-top: 0;
+        }
+        
+        .lyrics-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: -50px; /* 隐藏时收回margin */
+        }
+
+        .lyrics-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2em;
+        }
+
+        .lyrics-content .translation {
+            display: none;
+            font-size: 85%;
+            color: var(--text-light-gray);
+            margin-top: 8px;
+            line-height: 1.8;
+        }
+        
+        /* 中文歌词字体 */
+        .lyrics-content .translation[data-lang="zh"] {
+            font-family: "STZhongsong", "SimSun", var(--font-sub-title), serif;
+        }
+
+        /* --- 3. MV Section --- */
+        #mv {
+            background-color: var(--dark-blue);
+            color: var(--text-white);
+        }
+
+        .mv-container {
+            position: relative;
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            background-image: url('https://summering.0m-p.space/assets/images/summering_A.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .mv-container::before { /* 悬停遮罩 */
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            transition: background-color 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease;
+        }
+
+        .mv-container:hover::before {
+            background-color: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .mv-link {
+            color: var(--text-white);
+            border: 2px solid var(--text-white);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-family: var(--font-body-en);
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 1;
+        }
+
+        .mv-container:hover .mv-link {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 4. Streaming Section --- */
+        #streaming {
+            background-color: #f7f7f7;
+        }
+        .streaming-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+        .cover-art {
+            width: 250px;
+            height: 250px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .streaming-btn {
+            display: inline-block;
+            background-color: var(--bg-white);
+            color: var(--bg-black);
+            font-family: var(--font-body-en);
+            font-weight: 700;
+            text-decoration: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: 1px solid var(--bg-black);
+            transition: background-color 0.3s, color 0.3s, transform 0.2s, border-color 0.3s;
+        }
+        .streaming-btn:hover {
+            background-color: var(--dark-blue);
+            color: var(--text-white);
+            border-color: var(--dark-blue);
+            transform: translateY(-3px);
+        }
+
+        /* --- 5. Credit Section --- */
+        #credit {
+            background-color: var(--bg-white);
+        }
+        .credit-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: left;
+            line-height: 2;
+        }
+        .credit-column h3 {
+            font-family: var(--font-sub-title);
+            margin-bottom: 1em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5em;
+        }
+        
+        /* --- 6. Footer --- */
+        footer {
+            background-color: var(--bg-black);
+            color: var(--text-white);
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        footer p:first-child {
+            margin-bottom: 10px;
+        }
+
+        /* --- 7. Floating Music Player --- */
+        .music-player {
+            position: fixed;
+            bottom: 30px;
+            left: 30px; /* 默认位置左下角 */
+            transform: none; /* 移除居中transform */
+            width: 350px;
+            background-color: rgba(255, 255, 255, 0.6); /* 增加透明度 */
+            backdrop-filter: blur(10px); /* 减小模糊度 */
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            overflow: hidden;
+            cursor: grab; /* 添加可拖动光标 */
+        }
+        .music-player.dragging {
+            cursor: grabbing;
+            transition: none; /* 拖动时移除过渡效果 */
+        }
+
+        .player-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .player-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background-image: url('https://summering.0m-p.space/assets/images/cover.jpg');
+            background-size: cover;
+            flex-shrink: 0;
+        }
+
+        .player-details {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .player-details .title {
+            font-weight: 700;
+        }
+        .player-details .artist {
+            font-size: 0.9em;
+            color: #555;
+            font-family: var(--font-sub-title);
+        }
+
+        .player-main-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #play-pause-btn {
+            background: none;
+            border: 2px solid var(--text-dark);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            cursor: pointer;
+            color: var(--text-dark);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        #play-pause-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        #play-pause-btn .material-symbols-rounded {
+            font-size: 28px;
+        }
+        
+        .progress-container {
+            flex-grow: 1;
+            height: 6px;
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.6); /* 增加进度条透明度 */
+            border-radius: 3px;
+        }
+        
+        .hide-player-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+            transition: color 0.2s;
+        }
+        .hide-player-btn:hover {
+            color: var(--text-dark);
+        }
+
+        /* Collapsed State */
+        .music-player.collapsed {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            padding: 0;
+            cursor: grab;
+        }
+        .music-player.collapsed .player-content {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .music-player.collapsed .show-player-icon {
+            opacity: 1;
+        }
+        .show-player-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: var(--text-dark);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease 0.2s;
+        }
+
+        /* --- 响应式设计 --- */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2.5rem;
+            }
+            .credit-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .view-lyrics-btn {
+                bottom: 20px;
+                right: 20px;
+                font-size: 1rem;
+            }
+            .music-player {
+                width: 90%;
+                max-width: 350px;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%) !important; /* 在手机上强制居中，覆盖拖动样式 */
+                top: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Summering</h1>
+            <h2 class="hero-subtitle">じん</h2>
+        </div>
+        <a href="#lyrics" class="view-lyrics-btn">View Lyrics</a>
+    </section>
+
+    <!-- 2. Lyrics Section -->
+    <section id="lyrics">
+        <h2 class="section-title">Lyrics</h2>
+        <div class="lyrics-controls">
+            <button class="lang-btn active" data-lang="jp">JP</button>
+            <button class="lang-btn" data-lang="kana">Kana</button>
+            <button class="lang-btn" data-lang="roma">Roma</button>
+            <button class="lang-btn" data-lang="zh">ZH</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="collapse-btn" id="collapse-lyrics-btn">
+                <span id="collapse-lyrics-text">Collapse</span>
+                <span class="material-symbols-rounded" id="collapse-lyrics-icon">expand_less</span>
+            </button>
+        </div>
+        <div class="lyrics-content" id="lyrics-content">
+            <!-- 歌词数据将由JS动态生成 -->
+        </div>
+    </section>
+
+    <!-- 3. MV Section -->
+    <section id="mv">
+        <h2 class="section-title">MV</h2>
+        <div class="mv-container">
+            <a href="https://www.youtube.com/watch?v=UxwHkqkzm0o" target="_blank" class="mv-link">
+                View on YouTube
+            </a>
+        </div>
+    </section>
+
+    <!-- 4. Streaming / DL Section -->
+    <section id="streaming">
+        <h2 class="section-title">Streaming / DL</h2>
+        <div class="streaming-content">
+            <img src="https://summering.0m-p.space/assets/images/cover.jpg" alt="Summering Cover Art" class="cover-art">
+            <a href="https://umj.lnk.to/jin_summeringID" target="_blank" class="streaming-btn">Listen Now</a>
+        </div>
+    </section>
+
+    <!-- 5. Credit Section -->
+    <section id="credit">
+        <h2 class="section-title">Credit</h2>
+        <div class="credit-container">
+            <div class="credit-column">
+                <h3>Summering</h3>
+                <p>Music：じん</p>
+                <p>Guitar：じん</p>
+                <p>Bass：白神真志朗</p>
+                <p>Drum：ゆーまお（ヒトリエ）</p>
+                <p>Vocaloid Edit : びび</p>
+            </div>
+            <div class="credit-column">
+                <h3>Vocal</h3>
+                <p>初音ミク</p>
+                <br>
+                <h3>Video Direction</h3>
+                <p>しづ</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Footer -->
+    <footer>
+        <p>Fan Page</p>
+        <p>© じん</p>
+    </footer>
+
+    <!-- 7. Floating Music Player -->
+    <div class="music-player collapsed" id="music-player">
+        <div class="player-content">
+            <button class="hide-player-btn" id="hide-player-btn">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+            <div class="player-info">
+                <div class="player-cover"></div>
+                <div class="player-details">
+                    <div class="title">Summering</div>
+                    <div class="artist">じん</div>
+                </div>
+            </div>
+            <div class="player-main-controls">
+                <button id="play-pause-btn">
+                    <span class="material-symbols-rounded">play_arrow</span>
+                </button>
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+        <span class="material-symbols-rounded show-player-icon">music_note</span>
+    </div>
+
+    <audio id="audio-player" src="https://summering.0m-p.space/assets/audios/summering.mp3" preload="metadata"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 歌词数据 ---
+            const lyricsData = [
+                { jp: "入道雲は きっと<br>紙に描いた 落書きでした", kana: "にゅうどうぐもは きっと<br>かみに かいた らくがきでした", roma: "nyuudougumo wa kitto<br>kami ni kaita rakugaki deshita", zh: "积雨云 一定是<br>画在纸上的 涂鸦吧", en: "The thunderhead clouds were surely<br>Just a doodle drawn on paper" },
+                { jp: "嗄れた声は きっと<br>聞き違いの 耳鳴りでした", kana: "かれたこえは きっと<br>ききまちがいの みみなりでした", roma: "kareta koe wa kitto<br>kikichigai no miminari deshita", zh: "嘶哑的声音 一定是<br>错听了的 耳鸣吧", en: "That hoarse voice was surely<br>A misheard ringing in my ears" },
+                { jp: "息が詰まる程<br>目を覆いたくなる程", kana: "いきがつまるほど<br>めをおおいたくなるほど", roma: "iki ga tsumaru hodo<br>me o ooitaku naru hodo", zh: "那般令人窒息<br>那般令人不忍直视", en: "So breathtaking<br>So much I wanted to cover my eyes" },
+                { jp: "全部が綺麗でした<br>彼れを 如何と呼ぶんでしょう", kana: "ぜんぶがきれいでした<br>かれを いかとよぶんでしょう", roma: "zenbu ga kirei deshita<br>kare o ika to yobun deshou", zh: "一切都曾是那么美丽<br>该如何称呼那样的时光呢", en: "Everything was beautiful<br>What should I call that time?" },
+                { jp: "君は", kana: "きみは", roma: "kimi wa", zh: "你啊", en: "You..." },
+                { jp: "追想<br>錆びた鉄橋<br>人知れず 足を向けました", kana: "ついそう<br>さびたてっきょう<br>ひとしれず あしをむけました", roma: "tsuisou<br>sabita tekkyou<br>hitoshirezu ashi o mukemashita", zh: "追忆<br>生锈的铁桥<br>无人知晓地 我曾走向那里", en: "Recollection<br>A rusted iron bridge<br>Secretly, I made my way there" },
+                { jp: "湿気った匂いが きっと<br>逸れ者の 逃げ場所でした", kana: "しけったにおいが きっと<br>はぐれものの にげばしょでした", roma: "shiketta nioi ga kitto<br>haguremono no nigebasho deshita", zh: "潮湿的气味 一定是<br>离群之人的 避风港吧", en: "The damp smell was surely<br>A hiding place for a stray" },
+                { jp: "薄い缶バッヂも<br>すぐ剥がれたシールも<br>全部 宝物だったのです", kana: "うすいかんばっぢも<br>すぐはがれたしーるも<br>ぜんぶ たからものだったのです", roma: "usui kan bajji mo<br>sugu hagareta shiiru mo<br>zenbu takaramono datta no desu", zh: "薄薄的徽章也好<br>轻易剥落的贴纸也罢<br>全部 曾是我的宝物啊", en: "The thin pin badge<br>The sticker that peeled off so easily<br>All of it was my treasure" },
+                { jp: "いつしか、真面になったんだ<br>其れが何でか、本当に<br>時折、恐ろしくなるのです", kana: "いつしか、まじめになったんだ<br>それがなんでか、ほんとうに<br>ときおり、おそろしくなるのです", roma: "itsushika, majime ni nattanda<br>sore ga nande ka, hontou ni<br>tokiori, osoroshiku naru no desu", zh: "不知不觉间、我变得正经起来<br>不知为何、真的<br>偶尔会因此感到恐惧", en: "Somewhere along the way, I became so serious<br>Why that is, I really don't know<br>Sometimes, it truly frightens me" },
+                { jp: "バイバイ、My Dxxr<br>如何か、汚れないでいて<br>真っ青な風景に<br>繊細な儘でいて", kana: "ばいばい、My Dxxr<br>どうか、よごれないでいて<br>まっさおなふうけいに<br>せんさいなままでいて", roma: "baibai, My Dxxr<br>douka, yogorenai de ite<br>massao na fuukei ni<br>sensai na mama de ite", zh: "再见了、我亲爱的 Dxxr<br>请你、一定不要被玷污<br>在那片蔚蓝的风景里<br>请永远保持那份纤细", en: "Bye-bye, My Dxxr<br>Please, don't ever be tainted<br>In that pure blue scenery<br>Please stay as you are, so delicate" },
+                { jp: "過ぎ去る夏が<br>息を止めた頃に<br>今更、後悔に 耽たのです", kana: "すぎさるなつが<br>いきをとめたころに<br>いまさら、こうかいに ふけたのです", roma: "sugisaru natsu ga<br>iki o tometa koro ni<br>imasara, koukai ni fuketa no desu", zh: "当逝去的夏天<br>停止呼吸之时<br>事到如今、我才沉溺于后悔之中", en: "When the passing summer<br>Held its breath<br>Only now, do I indulge in regret" },
+                { jp: "降る、夕立に<br>晴れ上がりが覗く<br>厭に澄んだ 風合いと匂いのまま", kana: "ふる、ゆうだちに<br>はれあがりがのぞく<br>いやにすんだ ふうあいとにおいのまま", roma: "furu, yuudachi ni<br>hareagari ga nozoku<br>iya ni sunda fuuai to nioi no mama", zh: "落下的、傍晚阵雨中<br>雨过天晴悄然探出<br>依旧是那过分澄澈的 色彩与气味", en: "In the falling evening shower<br>A break in the clouds peeks through<br>With that same, unpleasantly clear texture and scent" },
+                { jp: "潸然、頰を打った群青に<br>気が付けど", kana: "さんぜん、ほおをうったぐんじょうに<br>きがつけど", roma: "sanzen, hoo o utta gunjou ni<br>ki ga tsukedo", zh: "潸然泪下、当那蔚蓝拍打脸颊时<br>我才终于发觉", en: "As the ultramarine, tearfully, struck my cheeks<br>I finally noticed" },
+                { jp: "悲しい哉、忽然と<br>去ってしまうのです", kana: "かなしいかな、こつぜんと<br>さってしまうのです", roma: "kanashii kana, kotsuzen to<br>satteshimau no desu", zh: "可悲啊、它却又忽然<br>消失离去了", en: "But sadly, it suddenly<br>Vanishes and is gone" },
+                { jp: "拝啓<br>僕は きっと<br>馬鹿にされるのが 嫌でした", kana: "はいけい<br>ぼくは きっと<br>ばかにされるのが いやでした", roma: "haikei<br>boku wa kitto<br>baka ni sareru no ga iya deshita", zh: "敬启<br>我啊 一定是<br>讨厌被人当成傻瓜", en: "Dear Sir/Madam,<br>I'm sure<br>I hated being made a fool of" },
+                { jp: "陰気な奴と ずっと<br>虐められるのが 嫌でした", kana: "いんきなやつと ずっと<br>いじめられるのが いやでした", roma: "inki na yatsu to zutto<br>ijimereru no ga iya deshita", zh: "也一直 讨厌被当作<br>阴沉的家伙被人欺负", en: "I always hated<br>Being bullied for being a gloomy person" },
+                { jp: "だから、愛しくて<br>手に余る物 全部を", kana: "だから、いとしくて<br>てにあまるもの ぜんぶを", roma: "dakara, itoshikute<br>te ni amaru mono zenbu o", zh: "所以、那些珍爱的<br>那些无法承受的一切", en: "That's why, all the things I held dear<br>All the things too much for me to handle" },
+                { jp: "全部 置き去りに<br>生きたのです", kana: "ぜんぶ おきざりに<br>いきたのです", roma: "zenbu okizari ni<br>ikita no desu", zh: "我将它们 全部舍弃<br>才活到了今天", en: "I left them all behind<br>And went on living" },
+                { jp: "降る、夕立に<br>晴れ上がりが覗く", kana: "ふる、ゆうだちに<br>はれあがりがのぞく", roma: "furu, yuudachi ni<br>hareagari ga nozoku", zh: "落下的、傍晚阵雨中<br>雨过天晴悄然探出", en: "In the falling evening shower<br>A break in the clouds peeks through" },
+                { jp: "吸って吐いた群青に<br>溺れそうな程", kana: "すってはいたぐんじょうに<br>おぼれそうなほど", roma: "sutte haita gunjou ni<br>oboresou na hodo", zh: "在那一呼一吸的蔚蓝里<br>几乎快要溺毙", en: "In the ultramarine I breathed in and out<br>I feel like I'm about to drown" },
+                { jp: "卑しい哉、思うのです<br>ずっと", kana: "いやしいかな、おもうのです<br>ずっと", roma: "iyashii kana, omou no desu<br>zutto", zh: "卑劣啊、我竟如此想着<br>一直以来", en: "How wretched, I think to myself<br>Always" },
+                { jp: "怱々", kana: "そうそう", roma: "sousou", zh: "匆匆", en: "Sincerely," },
+                { jp: "バイバイ、My Dxxr<br>如何か、忘れないでいて<br>真っ青な風景に<br>傷を遺していて", kana: "ばいばい、My Dxxr<br>どうか、わすれないでいて<br>まっさおなふうけいに<br>きずをのこしていて", roma: "baibai, My Dxxr<br>douka, wasurenai de ite<br>massao na fuukei ni<br>kizu o nokoshite ite", zh: "再见了、我亲爱的 Dxxr<br>请你、一定不要忘记<br>在那片蔚蓝的风景里<br>请留下伤痕的印记", en: "Bye-bye, My Dxxr<br>Please, don't you ever forget<br>In that pure blue scenery<br>Please leave a scar behind" },
+                { jp: "過ぎ去る夏を<br>何度も書き捨てて<br>失う決心が 付いたのです", kana: "すぎさるなつを<br>なんどもかきすてて<br>うしなうけっしんが ついたのです", roma: "sugisaru natsu o<br>nando mo kakisutete<br>ushinau kesshin ga tsuita no desu", zh: "将逝去的夏天<br>一次又一次地写下又抛弃<br>我终于下定了 失去的决心", en: "The passing summers<br>I wrote them down and threw them away, again and again<br>I've finally made up my mind to lose it all" },
+                { jp: "入道雲は きっと<br>僕の描いた 落書きでした", kana: "にゅうどうぐもは きっと<br>ぼくのかいた らくがきでした", roma: "nyuudougumo wa kitto<br>boku no kaita rakugaki deshita", zh: "积雨云 一定是<br>我亲手画下的 涂鸦吧", en: "The thunderhead clouds were surely<br>A doodle that I drew myself" },
+                { jp: "歪んだ空も きっと<br>一人分の 幻でした", kana: "ゆがんだそらも きっと<br>ひとりぶんの まぼろしでした", roma: "yuganda sora mo kitto<br>hitoribun no maboroshi deshita", zh: "扭曲的天空 一定也只是<br>属于我一个人的 幻觉吧", en: "The distorted sky was surely<br>A phantom just for me" },
+                { jp: "触れれば、痛む程<br>目を背けたくなる程", kana: "ふれれば、いたむほど<br>めをそむけたくなるほど", roma: "furereba, itamu hodo<br>me o somuketaku naru hodo", zh: "那般一触碰就生疼<br>那般令人想要移开视线", en: "So painful to the touch<br>So much I wanted to look away" },
+                { jp: "全部 本物に<br>見えたのです", kana: "ぜんぶ ほんものに<br>みえたのです", roma: "zenbu honmono ni<br>mieta no desu", zh: "一切 看起来<br>都曾那么真实", en: "Everything seemed<br>So real" }
+            ];
+
+            const lyricsContainer = document.getElementById('lyrics-content');
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const collapseBtn = document.getElementById('collapse-lyrics-btn');
+            const collapseBtnText = document.getElementById('collapse-lyrics-text');
+            const collapseBtnIcon = document.getElementById('collapse-lyrics-icon');
+
+            function renderLyrics() {
+                let html = '';
+                lyricsData.forEach(line => {
+                    html += `<p><span class="original">${line.jp}</span><span class="translation" data-lang="kana">${line.kana}</span><span class="translation" data-lang="roma">${line.roma}</span><span class="translation" data-lang="zh">${line.zh}</span><span class="translation" data-lang="en">${line.en}</span></p>`;
+                });
+                lyricsContainer.innerHTML = html;
+            }
+
+            langButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const selectedLang = button.dataset.lang;
+                    langButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const allTranslations = document.querySelectorAll('.lyrics-content .translation');
+                    allTranslations.forEach(trans => {
+                        trans.style.display = (selectedLang !== 'jp' && trans.dataset.lang === selectedLang) ? 'block' : 'none';
+                    });
+                });
+            });
+
+            collapseBtn.addEventListener('click', () => {
+                const isCollapsed = lyricsContainer.classList.toggle('collapsed');
+                if (isCollapsed) {
+                    collapseBtnText.textContent = 'Expand';
+                    collapseBtnIcon.textContent = 'expand_more';
+                } else {
+                    collapseBtnText.textContent = 'Collapse';
+                    collapseBtnIcon.textContent = 'expand_less';
+                }
+            });
+
+            const player = document.getElementById('music-player');
+            const audio = document.getElementById('audio-player');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = playPauseBtn.querySelector('.material-symbols-rounded');
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+            const hidePlayerBtn = document.getElementById('hide-player-btn');
+
+            let isPlaying = false;
+
+            function togglePlay() {
+                if (isPlaying) { audio.pause(); playIcon.textContent = 'play_arrow'; } 
+                else { audio.play(); playIcon.textContent = 'pause'; }
+                isPlaying = !isPlaying;
+            }
+
+            function updateProgress() {
+                const { duration, currentTime } = audio;
+                if (duration) {
+                    const progressPercent = (currentTime / duration) * 100;
+                    progressBar.style.width = `${progressPercent}%`;
+                }
+            }
+
+            function setProgress(e) {
+                const width = this.clientWidth;
+                const clickX = e.offsetX;
+                const duration = audio.duration;
+                if (duration) audio.currentTime = (clickX / width) * duration;
+            }
+
+            playPauseBtn.addEventListener('click', togglePlay);
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', () => { playIcon.textContent = 'play_arrow'; isPlaying = false; progressBar.style.width = '0%'; });
+            progressContainer.addEventListener('click', setProgress);
+
+            hidePlayerBtn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                player.classList.add('collapsed');
+                // Reset position to bottom left
+                player.style.top = 'auto';
+                player.style.left = '30px';
+                player.style.bottom = '30px';
+                player.style.transform = 'none';
+            });
+            player.addEventListener('click', (e) => { 
+                if (player.classList.contains('collapsed')) {
+                    player.classList.remove('collapsed');
+                }
+            });
+
+            // --- 播放器拖动逻辑 ---
+            function dragElement(elmnt) {
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                
+                const dragMouseDown = (e) => {
+                    // Prevent drag on interactive elements inside the expanded player
+                    if (!elmnt.classList.contains('collapsed')) {
+                        const isInteractive = e.target.closest('button, .progress-container');
+                        if (isInteractive) return;
+                    }
+
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                    
+                    elmnt.classList.add('dragging');
+                }
+
+                elmnt.onmousedown = dragMouseDown;
+
+                const elementDrag = (e) => {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    
+                    let newTop = elmnt.offsetTop - pos2;
+                    let newLeft = elmnt.offsetLeft - pos1;
+
+                    const bodyWidth = document.documentElement.clientWidth;
+                    const bodyHeight = document.documentElement.clientHeight;
+                    
+                    newLeft = Math.max(10, Math.min(newLeft, bodyWidth - elmnt.offsetWidth - 10));
+                    newTop = Math.max(10, Math.min(newTop, bodyHeight - elmnt.offsetHeight - 10));
+
+                    elmnt.style.top = newTop + "px";
+                    elmnt.style.left = newLeft + "px";
+                    elmnt.style.bottom = 'auto';
+                    elmnt.style.transform = 'none';
+                }
+
+                const closeDragElement = () => {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                    elmnt.classList.remove('dragging');
+                }
+            }
+
+            dragElement(player);
+            renderLyrics();
+        });
+    </script>
+
+</body>
+</html>
